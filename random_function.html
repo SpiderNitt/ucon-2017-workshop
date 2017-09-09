@@ -18,12 +18,13 @@
 <body>
 <canvas id = "canvas" width = "500" height = "600"></canvas>
 </body>
+<script src="/socket.io/socket.io.js"></script>
 <script type="text/javascript">
   var canvas = document.getElementById("canvas");
   var ctx = canvas.getContext("2d");
   document.addEventListener("keydown", update);
 
-  var lives=3;var flag=0;
+  var lives=30000000;var flag=0;
    var lineY=0;
 
   function object (x,y,status,width,height,speed,oldObject) {
@@ -125,7 +126,7 @@ ctx.closePath();
 
   	 ctx.rect(obstacle.x,obstacle.y,obstacle.width,obstacle.height);//drawing the game space for the game
      ctx.fillStyle = "#00FF00";
-     ctx.fill();  
+       ctx.fill();  
      ctx.fillStyle = "green";
      ctx.closePath();
     }
@@ -166,7 +167,7 @@ if(lives==0)
   }
 }
 
-/*function changelane(direction)
+function changelane(direction)
 {
   if(direction=="right")
   {if((car.x>=0)&&(car.x+150<=canvas.width-imgTag.width))
@@ -174,7 +175,8 @@ if(lives==0)
   else if(direction="left")
   {if((car.x-150>=0)&&(car.x<=canvas.width-imgTag.width))
         car.x-=170;}
-}*/
+}
+
 function update(event)
   {
     if (event.keyCode == 37)
@@ -189,7 +191,7 @@ function update(event)
     }
   }
   function gamePlay(){
- console.log(car.status);
+ //console.log(car.status);
     if(!car.status){
  
          ctx.clearRect(0,0,canvas.width,canvas.height);
@@ -234,8 +236,13 @@ ctx.fillStyle="green";
 
     //obstacleGeneration();
     gamePlay();
-
-
+    
+    var socket = io();
+    socket.on('serverEvent', function(data){
+      console.log("asd");
+      console.log(data);
+      changelane(data);
+    });
   
 </script>
 

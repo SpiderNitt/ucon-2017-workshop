@@ -1,9 +1,12 @@
+var express = require('express');
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
+app.use(express.static('public'));
+
 app.get('/', function(req, res){
-  res.sendfile('index.html');
+  res.sendfile('random_function.html');
 });
 
 app.get('/app',function(req, res){
@@ -17,13 +20,14 @@ io.on('connection', function(socket){
   console.log('A user connected');
 
   socket.on('clientEvent', function(data){
-  	if(data < -5 && set_lane == 0){
+
+  	if(data < -2 && set_lane == 0){
 	  	dir = "right";
 	  	set_lane = 1;
 	  	console.log(dir)
 	  	socket.broadcast.emit('serverEvent',dir);
   	}
-	if(data > 5 && set_lane == 0){
+	if(data > 2 && set_lane == 0){
 		dir = "left";
 		set_lane = 1;
 		console.log(dir);
@@ -31,7 +35,6 @@ io.on('connection', function(socket){
 	}
 	if(data < 1 && data > -1){
 		set_lane = 0;
-
 	}
 
   });
