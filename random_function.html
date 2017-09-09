@@ -1,0 +1,242 @@
+<html>
+<head>
+	<title>Random generation</title>
+	<style type="text/css">
+	body 
+	{
+	 padding: 5px; 
+	 margin: 0; 
+	}
+	canvas
+	 {
+	  background: gray; 
+    display: block;
+    margin:0 auto;
+	}
+</style>
+</head>
+<body>
+<canvas id = "canvas" width = "500" height = "600"></canvas>
+</body>
+<script type="text/javascript">
+  var canvas = document.getElementById("canvas");
+  var ctx = canvas.getContext("2d");
+  document.addEventListener("keydown", update);
+
+  var lives=3;var flag=0;
+   var lineY=0;
+
+  function object (x,y,status,width,height,speed,oldObject) {
+  	this.x = x;
+  	this.y = y;
+  	this.width = width;
+  	this.height = height;
+  	this.status = status;
+  	this.speed = speed;
+  	this.oldObject = oldObject;
+  }
+ 
+    function whiteLines()
+  {
+  if(lineY<=600)
+  lineY=lineY+2;
+  else
+  lineY=0;
+var x;
+for(x=0;x<5;x++)
+  drawWhiteLines(72.5,lineY+x*100,10,70);
+
+for(x=1;x<=6;x++)
+  drawWhiteLines(72.5,lineY-(x*100),10,70);
+for(x=0;x<5;x++)
+   drawWhiteLines(245.33333,lineY+x*100,10,70);
+
+for(x=1;x<=6;x++)
+ drawWhiteLines(245.33333,lineY-(x*100),10,70);
+
+for(x=0;x<5;x++)
+  drawWhiteLines(415.33333,lineY+x*100,10,70);
+
+for(x=1;x<=6;x++)
+drawWhiteLines(415.33333,lineY-(x*100),10,70);
+  }
+  function drawWhiteLines(x,y,width,height)
+  {
+
+  ctx.beginPath();
+  ctx.rect(x,y,width,height);
+  ctx.fillStyle="white";
+  ctx.fill();
+  }
+ function background()
+  {
+  ctx.beginPath();
+  ctx.rect(155,0,5,600);
+  ctx.fillStyle="yellow";
+  ctx.fill();
+  ctx.rect(162,0,5,600);
+  ctx.fill();
+  ctx.rect(325,0,5,600);
+  ctx.fill();
+   ctx.rect(332,0,5,600);
+  ctx.fill();
+  ctx.fillStyle = "green";
+  ctx.closePath();
+  ctx.fillStyle = "#00FF00";
+  whiteLines();
+ }
+
+    
+
+
+  var obstacle = new object(40,0,true,80,80,5,true);
+  var car = new object(30,420,false,100,150,20,false);
+  var imgTag = new Image();
+  imgTag.src = "car1.png";
+  imgTag.onload = gamePlay;
+
+
+  
+  var random = 0; 
+  function obstacleGeneration(){
+    if(!obstacle.oldObject){
+     ctx.clearRect(obstacle.x,obstacle.y,obstacle.width,obstacle.height);
+  	 var random = Math.round(Math.random()*2);
+     flag=0;
+  	 ///alert("hi");
+  	 obstacle.x = (30+170*random);
+  	 
+  	 //y_coordinate = 0;
+  	 obstacle.status = true;
+  	ctx.beginPath();
+  	 ctx.rect(obstacle.x,obstacle.y,obstacle.width,obstacle.height);//drawing the game space for the game
+     ctx.fillStyle = "#00FF00";
+     ctx.fill();  
+     ctx.fillStyle = "#00FF00";
+ctx.closePath();
+     obstacle.oldObject = true;
+     ctx.fillStyle = "#00FF00";
+       }
+
+    }
+  function drawObstacle(){
+  	if(obstacle.status){
+  	 ctx.beginPath();
+
+  	 ctx.rect(obstacle.x,obstacle.y,obstacle.width,obstacle.height);//drawing the game space for the game
+     ctx.fillStyle = "#00FF00";
+     ctx.fill();  
+     ctx.fillStyle = "green";
+     ctx.closePath();
+    }
+   else{
+      ctx.clearRect(obstacle.x,obstacle.y,obstacle.width,obstacle.height);
+    	obstacleGeneration();
+   
+    }
+
+  }
+
+  function obstacleMovement(y,speed){
+  	return y + speed;
+
+  }
+
+
+function drawCar()
+{
+  ctx.drawImage(imgTag, car.x, car.y);                       
+  
+}
+
+function detect(obstacleX,obstacleY,obstacleW,obstacleH){
+  
+  if(car.y<=obstacleY+obstacleH){
+    if(flag==0&&((car.x>=obstacleX)&&(car.x<=obstacleX+obstacleW))||((car.x+car.width>=obstacleX)&&(car.x+car.width<=obstacleX+obstacleW))){
+     {lives--;flag=1; obstacle.y=601;
+if(lives==0)
+      {car.status=true; console.log(car.status);  } }
+    }
+    if(flag==0&&(obstacleX>=car.x)&&(obstacleX+obstacleW<=car.x+car.width)){
+     { lives--;flag=1; obstacle.y=601;
+if(lives==0)
+     {car.status=true; console.log(car.status);  } }
+    }
+    
+  }
+}
+
+/*function changelane(direction)
+{
+  if(direction=="right")
+  {if((car.x>=0)&&(car.x+150<=canvas.width-imgTag.width))
+        car.x +=170;}
+  else if(direction="left")
+  {if((car.x-150>=0)&&(car.x<=canvas.width-imgTag.width))
+        car.x-=170;}
+}*/
+function update(event)
+  {
+    if (event.keyCode == 37)
+    {
+    if((car.x-150>=0)&&(car.x<=canvas.width-imgTag.width))
+        car.x-=170; 
+    }
+    if (event.keyCode == 39)
+    {
+    if((car.x>=0)&&(car.x+150<=canvas.width-imgTag.width))
+        car.x +=170; 
+    }
+  }
+  function gamePlay(){
+ console.log(car.status);
+    if(!car.status){
+ 
+         ctx.clearRect(0,0,canvas.width,canvas.height);
+  background();
+      drawCar();
+    //	console.log(obstacle.status      +"      "+ obstacle.x_coordinate+"    "+obstacle.y_coordinate+"    "+obstacle.oldObject);
+
+     
+         
+    	if(obstacle.y>canvas.height){
+         obstacle.status = false;
+         obstacle.oldObject=false;
+         obstacle.y = 0;
+         //obstacleGeneration(obstacle.x_coordinate,obstacle.y_coordinate,obstacle.width,obstacle.height,obstacle.status);
+
+    	}
+      
+      
+      obstacle.y = obstacleMovement(obstacle.y,obstacle.speed);
+      
+      detect(obstacle.x,obstacle.y,obstacle.width,obstacle.height);
+
+
+    	drawObstacle(obstacle.x,obstacle.y,obstacle.width,obstacle.height,obstacle.status);
+      
+    	
+       }
+    else{ctx.beginPath();
+       ctx.rect(130,240,250,150);
+    ctx.fill();
+ 
+     ctx.font="bold 50px serif";
+     ctx.fillStyle="red";
+    ctx.fillText("You lost",165,330);
+      ctx.fillStyle="blue";
+        ctx.closePath();
+  
+    }
+    requestAnimationFrame(gamePlay);
+ctx.fillStyle="green";
+ }
+
+    //obstacleGeneration();
+    gamePlay();
+
+
+  
+</script>
+
+</html>
