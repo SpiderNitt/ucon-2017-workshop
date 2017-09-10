@@ -239,7 +239,8 @@ drawWhiteLines(415.33333,lineY-(x*100),10,70);
   var imgTag = new Image();
   imgTag.src = "car1.png";
   imgTag.onload = gamePlay;
-
+var barricade=new Image();
+barricade.src="barricade.png";
 var gameover=new Image();
 gameover.src="gameover.png";
 
@@ -258,12 +259,13 @@ nitro.src="nitro.png";
   	 
   	 //y_coordinate = 0;
   	 obstacle.status = true;
-  	ctx.beginPath();
+  	/*ctx.beginPath();
   	 ctx.rect(obstacle.x,obstacle.y,obstacle.width,obstacle.height);//drawing the game space for the game
      ctx.fillStyle = "#00FF00";
      ctx.fill();  
      ctx.fillStyle = "#00FF00";
-ctx.closePath();
+ctx.closePath();*/
+ctx.drawImage(barricade,0,0,150,150,obstacle.x,obstacle.y,obstacle.width,obstacle.height);
      obstacle.oldObject = true;
      ctx.fillStyle = "#00FF00";
        }
@@ -273,11 +275,13 @@ ctx.closePath();
   	if(obstacle.status){
   	 ctx.beginPath();
 
-  	 ctx.rect(obstacle.x,obstacle.y,obstacle.width,obstacle.height);//drawing the game space for the game
+  	 /*ctx.rect(obstacle.x,obstacle.y,obstacle.width,obstacle.height);//drawing the game space for the game
      ctx.fillStyle = "#00FF00";
        ctx.fill();  
      ctx.fillStyle = "green";
-     ctx.closePath();
+     ctx.closePath();*/
+     ctx.drawImage(barricade,0,0,150,150,obstacle.x,obstacle.y,obstacle.width,obstacle.height);
+
     }
    else{
       ctx.clearRect(obstacle.x,obstacle.y,obstacle.width,obstacle.height);
