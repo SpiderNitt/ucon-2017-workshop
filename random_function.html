@@ -41,12 +41,14 @@ particle_no = 25;
 var particles = [];
 var crash1=document.getElementById("crash1");
 var crashfinal=document.getElementById("finalcrash");
+var score=0;
 function drawscore()
 {
 	c.beginPath();
 	c.font="25px serif";
 	c.fillStyle="#FFFFFF";
 	c.fillText("Score:",350,25);
+	c.fillText(score,420,25);
 	c.closePath();
 }
   function reset()
@@ -357,9 +359,10 @@ function update(event)
    var nitropress=new Date();
  var nitroend=new Date();
  var flagtime=false;
+ var increase=0.01;
   function gamePlay(){
   	 	c.clearRect(0,0,canvas1.width,canvas1.height);
-  	
+  	score+=increase;
   	if(once==0)
   	{
   	
@@ -378,7 +381,7 @@ bar.widths=150;
     //	console.log(obstacle.status      +"      "+ obstacle.x_coordinate+"    "+obstacle.y_coordinate+"    "+obstacle.oldObject);
 
      if(nitroPress)
-       	{ dy=4;
+       	{ dy=4;increase=0.05;
           drawNitro();
           if(!flagtime)
           	 {nitropress=Date.now();
@@ -388,7 +391,7 @@ bar.widths=150;
        	 nitroend=Date.now();
          
          if(Math.floor(((nitroend-nitropress)/1000)%60)>2)
-         	{   nitroPress=false;
+         	{   nitroPress=false;increase=0.01;
          		dy=2;
              	ctx.clearRect(car.x+15,car.y+145,70,45);
              	flagtime=0;
@@ -418,7 +421,7 @@ finalcrash.play();
       ctx.rect(130,260,250,100);
       ctx.fill();
  
-    
+    increase=0;
       ctx.font="bold 25px serif";
       ctx.fillStyle="green";
       ctx.fillText("Press enter to start",153,280);
