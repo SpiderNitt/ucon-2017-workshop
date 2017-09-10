@@ -14,13 +14,13 @@
     margin:0 auto;
 	}
 	#progress{
-		background:url(http://www.storywarren.com/wp-content/uploads/2016/09/space-1.jpg);
+		background:url("background.jpg");
 	}
 </style>
 </head>
 <body>
 <audio id="crash1" src="crash.mp3"></audio>
-<audio i="finalcrash" src="finalcrash.mp3"></audio>
+<audio id="finalcrash" src="finalcrash.mp3"></audio>
 <canvas id="progress" width="500" height="40"></canvas>
 <canvas id = "canvas" width = "500" height = "600"></canvas>
 </body>
@@ -35,7 +35,7 @@
 var canvas1=document.getElementById("progress");
 var c=canvas1.getContext("2d");
   var lives=3;var flag=0;var once=0;
-   var lineY=0;
+   var lineY=0,endflag=1;
 particle_no = 25;
    var counter = 0;
 var particles = [];
@@ -59,7 +59,7 @@ function drawscore()
   function progressbar()
   {
   	this.widths=0;
-  	 this.hue = 0;
+  	this.hue = 0;
 
   this.draw = function() {
     c.fillStyle = 'hsla(' + this.hue + ', 100%, 40%, 1)';
@@ -234,18 +234,17 @@ drawWhiteLines(415.33333,lineY-(x*100),10,70);
     
 
 
-  var obstacle = new object(40,0,true,80,80,5,true);
-  var car = new object(30,420,false,100,150,20,false);
-  var imgTag = new Image();
-  imgTag.src = "car1.png";
-  imgTag.onload = gamePlay;
+var obstacle = new object(40,0,true,80,80,5,true);
+var car = new object(30,420,false,100,150,20,false);
+var imgTag = new Image();
+imgTag.src = "car1.png";
+imgTag.onload = gamePlay;
 var barricade=new Image();
 barricade.src="barricade.png";
 var gameover=new Image();
 gameover.src="gameover.png";
 
 var nitro=new Image();
-
 nitro.src="nitro.png";
   
   var random = 0; 
@@ -254,9 +253,7 @@ nitro.src="nitro.png";
      ctx.clearRect(obstacle.x,obstacle.y,obstacle.width,obstacle.height);
   	 var random = Math.round(Math.random()*2);
      flag=0;
-  	 ///alert("hi");
-  	 obstacle.x = (30+170*random);
-  	 
+  	 obstacle.x = (30+170*random);  	 
   	 //y_coordinate = 0;
   	 obstacle.status = true;
   	/*ctx.beginPath();
@@ -274,7 +271,6 @@ ctx.drawImage(barricade,0,0,150,150,obstacle.x,obstacle.y,obstacle.width,obstacl
   function drawObstacle(){
   	if(obstacle.status){
   	 ctx.beginPath();
-
   	 /*ctx.rect(obstacle.x,obstacle.y,obstacle.width,obstacle.height);//drawing the game space for the game
      ctx.fillStyle = "#00FF00";
        ctx.fill();  
@@ -295,7 +291,6 @@ ctx.drawImage(barricade,0,0,150,150,obstacle.x,obstacle.y,obstacle.width,obstacl
   	return y + speed;
 
   }
-
 
 function drawCar()
 {
@@ -319,14 +314,12 @@ if(lives==0)
      { lives--;flag=1; obstacle.y=601;crash1.play();
 if(lives==0)
      {car.status=true; 
-
-     	//console.log(car.status);  
-     } }
+     } 
+ 	}
     }
     
   }
 }
-
 function changelane(direction)
 {
   if(direction=="right")
@@ -360,32 +353,30 @@ function update(event)
     	nitroPress=true;
 
   }
-   var nitropress=new Date();
+ var nitropress=new Date();
  var nitroend=new Date();
  var flagtime=false;
  var increase=0.01;
   function gamePlay(){
-  	 	c.clearRect(0,0,canvas1.width,canvas1.height);
+  	c.clearRect(0,0,canvas1.width,canvas1.height);
   	score+=increase;
   	if(once==0)
   	{
-  	
-	counter=215;
-bar.widths=150;
-  bar.hue =60;
-  reset();once++;
-  	}drawscore();
+  	counter=215;
+  	bar.widths=150;
+  	bar.hue =60;
+  	reset();
+  	once++;
+  	}
+  	drawscore();
   	drawlives();
- //console.log(car.status);
     if(!car.status){
- 
-         ctx.clearRect(0,0,canvas.width,canvas.height);
-  background();
-      drawCar();
-    //	console.log(obstacle.status      +"      "+ obstacle.x_coordinate+"    "+obstacle.y_coordinate+"    "+obstacle.oldObject);
-
+ 	ctx.clearRect(0,0,canvas.width,canvas.height);
+  	background();
+    drawCar();
      if(nitroPress)
-       	{ dy=4;increase=0.05;
+       	{ dy=4;
+       	  increase=0.05;
           drawNitro();
           if(!flagtime)
           	 {nitropress=Date.now();
@@ -405,27 +396,20 @@ bar.widths=150;
          obstacle.status = false;
          obstacle.oldObject=false;
          obstacle.y = 0;
-         //obstacleGeneration(obstacle.x_coordinate,obstacle.y_coordinate,obstacle.width,obstacle.height,obstacle.status);
-
     	}
-      
-      
       obstacle.y = obstacleMovement(obstacle.y,obstacle.speed);
-      
       detect(obstacle.x,obstacle.y,obstacle.width,obstacle.height);
-
-
-    	drawObstacle(obstacle.x,obstacle.y,obstacle.width,obstacle.height,obstacle.status);
-      
-    	
+      drawObstacle(obstacle.x,obstacle.y,obstacle.width,obstacle.height,obstacle.status);	
        }
-    else{ ctx.drawImage(gameover,130,80,250,180);
-finalcrash.play();
+    else if(endflag)
+    { 
+      finalcrash.play();
+      endflag=0;
+      ctx.drawImage(gameover,130,80,250,180);
       ctx.beginPath();
       ctx.rect(130,260,250,100);
       ctx.fill();
- 
-    increase=0;
+ 	  increase=0;
       ctx.font="bold 25px serif";
       ctx.fillStyle="green";
       ctx.fillText("Press enter to start",153,280);
@@ -436,10 +420,8 @@ finalcrash.play();
     ctx.fillStyle="black";
     if(enterPress==true)
     	document.location.reload();
-
  }
 
-    //obstacleGeneration();
     gamePlay();
     
     var socket = io();
