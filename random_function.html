@@ -13,9 +13,13 @@
     display: block;
     margin:0 auto;
 	}
+	#progress{
+		background:url(http://www.storywarren.com/wp-content/uploads/2016/09/space-1.jpg);
+	}
 </style>
 </head>
 <body>
+<canvas id="progress" width="500" height="40"></canvas>
 <canvas id = "canvas" width = "500" height = "600"></canvas>
 </body>
 <script src="/socket.io/socket.io.js"></script>
@@ -23,10 +27,144 @@
   var canvas = document.getElementById("canvas");
   var ctx = canvas.getContext("2d");
   document.addEventListener("keydown", update);
-
-  var lives=30000000;var flag=0;
+  document.addEventListener("keyup",upfun);
+  var enterPress=false;
+  var nitroPress=false;
+var canvas1=document.getElementById("progress");
+var c=canvas1.getContext("2d");
+  var lives=3;var flag=0;var once=0;
    var lineY=0;
+particle_no = 25;
+   var counter = 0;
+var particles = [];
+function drawscore()
+{
+	c.beginPath();
+	c.font="25px serif";
+	c.fillStyle="#FFFFFF";
+	c.fillText("Score:",350,25);
+	c.closePath();
+}
+  function reset()
+  {
+  c.fillStyle = "hsla(60,100%,40%,1)";
+  c.fillRect(90, 5, 150, 30);
+  }
+  function progressbar()
+  {
+  	this.widths=0;
+  	 this.hue = 0;
 
+  this.draw = function() {
+    c.fillStyle = 'hsla(' + this.hue + ', 100%, 40%, 1)';
+    c.fillRect(90, 5, this.widths, 30);
+    var grad = c.createLinearGradient(0, 0, 0, 130);
+    grad.addColorStop(0, "transparent");
+    grad.addColorStop(1, "rgba(0,0,0,0.5)");
+    c.fillStyle = grad;
+    c.fillRect(90, 5, this.widths, 30);
+  }
+  }
+  function particle() {
+  this.x = 90 + bar.widths;
+  this.y = 1;
+
+  this.vx = 0.8 + Math.random() * 1;
+  this.v = Math.random() * 5;
+  this.g = 1 + Math.random() * 3;
+  this.down = false;
+
+  this.draw = function() {
+    c.fillStyle = 'hsla(' + (bar.hue + 0.3) + ', 100%, 40%, 1)';
+    var size = Math.random() * 2;
+    c.fillRect(this.x, this.y, size, size);
+  }
+}
+bar = new progressbar();
+
+function drawlives()
+{
+	c.beginPath();
+	c.font="25px serif";
+	c.fillStyle="#00C1FF";
+	c.fillText("Life:",10,25);
+	c.closePath();
+	
+
+if(lives==2)
+{
+	if(bar.widths<100)
+	{bar.draw();
+		if(counter<142){
+bar.draw();
+		}
+	}
+	else
+	{
+		bar.widths-=2;
+		
+		counter--;
+		bar.hue-=0.8;
+		bar.draw();
+		 for (var i = 0; i < particle_no; i += 10) {
+      particles.push(new particle());
+	}
+}
+ 
+ 
+  updatelifebar();
+
+}
+else if(lives==1)
+{
+if(bar.widths<50)
+	{bar.draw();
+		if(counter<71){
+bar.draw();
+		}
+	}
+	else
+	{
+		bar.widths-=2;
+		
+		counter--;
+		bar.hue-=0.8;
+		bar.draw();
+		 for (var i = 0; i < particle_no; i += 10) {
+      particles.push(new particle());
+	}
+}
+ 
+ 
+  updatelifebar();
+
+}
+else if(lives==3)
+{
+	bar.draw();
+}
+}
+function updatelifebar()
+{
+	for (var i = 0; i < particles.length; i++) {
+    var p = particles[i];
+    p.x -= p.vx;
+    if (p.down == true) {
+      p.g += 0.1;
+      p.y += p.g;
+    } else {
+      if (p.g < 0) {
+        p.down = true;
+        p.g += 0.1;
+        p.y += p.g;
+      } else {
+        p.y -= p.g;
+        p.g -= 0.1;
+      }
+    }
+    p.draw();
+  }
+}
   function object (x,y,status,width,height,speed,oldObject) {
   	this.x = x;
   	this.y = y;
@@ -36,11 +174,11 @@
   	this.speed = speed;
   	this.oldObject = oldObject;
   }
- 
+ var dy=2;
     function whiteLines()
   {
   if(lineY<=600)
-  lineY=lineY+2;
+  lineY=lineY+dy;
   else
   lineY=0;
 var x;
@@ -96,7 +234,12 @@ drawWhiteLines(415.33333,lineY-(x*100),10,70);
   imgTag.src = "car1.png";
   imgTag.onload = gamePlay;
 
+var gameover=new Image();
+gameover.src="gameover.png";
 
+var nitro=new Image();
+
+nitro.src="nitro.png";
   
   var random = 0; 
   function obstacleGeneration(){
@@ -149,7 +292,10 @@ function drawCar()
   ctx.drawImage(imgTag, car.x, car.y);                       
   
 }
-
+function drawNitro()
+{
+	ctx.drawImage(nitro,car.x+15,car.y+145,70,45);
+}
 function detect(obstacleX,obstacleY,obstacleW,obstacleH){
   
   if(car.y<=obstacleY+obstacleH){
@@ -176,7 +322,12 @@ function changelane(direction)
   {if((car.x-150>=0)&&(car.x<=canvas.width-imgTag.width))
         car.x-=170;}
 }
+function upfun(e)
+{
+if(e.keyCode==13)
+	enterPress=false;
 
+}
 function update(event)
   {
     if (event.keyCode == 37)
@@ -189,8 +340,27 @@ function update(event)
     if((car.x>=0)&&(car.x+150<=canvas.width-imgTag.width))
         car.x +=170; 
     }
+    if(event.keyCode==13)
+    	enterPress=true;
+    if(event.keyCode==78)
+    	nitroPress=true;
+
   }
+   var nitropress=new Date();
+ var nitroend=new Date();
+ var flagtime=false;
   function gamePlay(){
+  	 	c.clearRect(0,0,canvas1.width,canvas1.height);
+  	
+  	if(once==0)
+  	{
+  	
+	counter=215;
+bar.widths=150;
+  bar.hue =60;
+  reset();once++;
+  	}drawscore();
+  	drawlives();
  //console.log(car.status);
     if(!car.status){
  
@@ -199,7 +369,22 @@ function update(event)
       drawCar();
     //	console.log(obstacle.status      +"      "+ obstacle.x_coordinate+"    "+obstacle.y_coordinate+"    "+obstacle.oldObject);
 
-     
+     if(nitroPress)
+       	{ dy=4;
+          drawNitro();
+          if(!flagtime)
+          	 {nitropress=Date.now();
+          	  flagtime++;
+          	 }  	
+       	}
+       	 nitroend=Date.now();
+         
+         if(Math.floor(((nitroend-nitropress)/1000)%60)>2)
+         	{   nitroPress=false;
+         		dy=2;
+             	ctx.clearRect(car.x+15,car.y+145,70,45);
+             	flagtime=0;
+             }
          
     	if(obstacle.y>canvas.height){
          obstacle.status = false;
@@ -219,19 +404,24 @@ function update(event)
       
     	
        }
-    else{ctx.beginPath();
-       ctx.rect(130,240,250,150);
-    ctx.fill();
+    else{ ctx.drawImage(gameover,130,80,250,180);
+
+      ctx.beginPath();
+      ctx.rect(130,260,250,100);
+      ctx.fill();
  
-     ctx.font="bold 50px serif";
-     ctx.fillStyle="red";
-    ctx.fillText("You lost",165,330);
-      ctx.fillStyle="blue";
-        ctx.closePath();
-  
+    
+      ctx.font="bold 25px serif";
+      ctx.fillStyle="green";
+      ctx.fillText("Press enter to start",153,280);
+      ctx.fillStyle="black";
+      ctx.closePath();
     }
     requestAnimationFrame(gamePlay);
-ctx.fillStyle="green";
+    ctx.fillStyle="black";
+    if(enterPress==true)
+    	document.location.reload();
+
  }
 
     //obstacleGeneration();
