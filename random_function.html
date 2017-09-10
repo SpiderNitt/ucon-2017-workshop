@@ -19,6 +19,8 @@
 </style>
 </head>
 <body>
+<audio id="crash1" src="crash.mp3"></audio>
+<audio i="finalcrash" src="finalcrash.mp3"></audio>
 <canvas id="progress" width="500" height="40"></canvas>
 <canvas id = "canvas" width = "500" height = "600"></canvas>
 </body>
@@ -37,6 +39,8 @@ var c=canvas1.getContext("2d");
 particle_no = 25;
    var counter = 0;
 var particles = [];
+var crash1=document.getElementById("crash1");
+var crashfinal=document.getElementById("finalcrash");
 function drawscore()
 {
 	c.beginPath();
@@ -300,14 +304,18 @@ function detect(obstacleX,obstacleY,obstacleW,obstacleH){
   
   if(car.y<=obstacleY+obstacleH){
     if(flag==0&&((car.x>=obstacleX)&&(car.x<=obstacleX+obstacleW))||((car.x+car.width>=obstacleX)&&(car.x+car.width<=obstacleX+obstacleW))){
-     {lives--;flag=1; obstacle.y=601;
+     {lives--;flag=1; obstacle.y=601;crash1.play();
 if(lives==0)
-      {car.status=true; console.log(car.status);  } }
+      {car.status=true; //console.log(car.status);
+        } }
     }
     if(flag==0&&(obstacleX>=car.x)&&(obstacleX+obstacleW<=car.x+car.width)){
-     { lives--;flag=1; obstacle.y=601;
+     { lives--;flag=1; obstacle.y=601;crash1.play();
 if(lives==0)
-     {car.status=true; console.log(car.status);  } }
+     {car.status=true; 
+
+     	//console.log(car.status);  
+     } }
     }
     
   }
@@ -405,7 +413,7 @@ bar.widths=150;
     	
        }
     else{ ctx.drawImage(gameover,130,80,250,180);
-
+finalcrash.play();
       ctx.beginPath();
       ctx.rect(130,260,250,100);
       ctx.fill();
