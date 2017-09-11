@@ -10,7 +10,8 @@
 	canvas
 	 {
 	  background: gray; 
-    display: block;
+	  display:block;
+   
     margin:0 auto;
 	}
 	#progress{
@@ -236,6 +237,7 @@ drawWhiteLines(415.33333,lineY-(x*100),10,70);
 
 var obstacle = new object(40,0,true,80,80,5,true);
 var car = new object(30,420,false,100,150,20,false);
+var test = 4.567;
 var imgTag = new Image();
 imgTag.src = "car1.png";
 imgTag.onload = gamePlay;
@@ -320,15 +322,7 @@ if(lives==0)
     
   }
 }
-function changelane(direction)
-{
-  if(direction=="right")
-  {if((car.x>=0)&&(car.x+150<=canvas.width-imgTag.width))
-        car.x +=170;}
-  else if(direction="left")
-  {if((car.x-150>=0)&&(car.x<=canvas.width-imgTag.width))
-        car.x-=170;}
-}
+
 function upfun(e)
 {
 if(e.keyCode==13)
@@ -353,6 +347,54 @@ function update(event)
     	nitroPress=true;
 
   }
+
+  function changeLane(direction){
+  	//for right turn, accel values are negative
+  direction = Number(direction.toFixed(1));
+  console.log(direction);
+  /*if(direction <= 0){
+       car.x = (canvas.width-car.x)*(Math.abs(direction)/7.5);
+       if(direction ==0){
+       	car.x = (canvas.width/2 - car.width/2);
+       }
+       if(Math.abs(direction)>7.5){
+          car.x = canvas.width - car.x-car.width;
+       }
+    
+ }
+ else{
+       car.x = (car.x)*(direction/7.5);
+       if(direction>7.5){
+          car.x = 0;
+       }
+ }*/
+ var offset = car.width;
+ if(direction<0){
+   offset = 0;
+ }
+  car.x = (canvas.width/15)*direction + canvas.width/2 - offset;
+
+   
+   }
+  /* direction = Math.round(direction);
+  if(direction < 0){
+       car.x = (direction*canvas.width/2)/7.5;
+       if(Math.abs(direction)>7.5){
+          car.x = -(7.5*canvas.width/2)/7.5;
+       }
+     
+ }
+ else{
+       car.x = (direction*canvas.width/2)/7.5;
+       if((direction)>7.5){
+          car.x = (7.5*canvas.width/2)/7.5;
+       }
+    }
+    test += 0.012;
+    console.log(car.x+"   "+test);
+
+}
+*/
  var nitropress=new Date();
  var nitroend=new Date();
  var flagtime=false;
@@ -398,7 +440,7 @@ function update(event)
          obstacle.y = 0;
     	}
       obstacle.y = obstacleMovement(obstacle.y,obstacle.speed);
-      detect(obstacle.x,obstacle.y,obstacle.width,obstacle.height);
+     detect(obstacle.x,obstacle.y,obstacle.width,obstacle.height);
       drawObstacle(obstacle.x,obstacle.y,obstacle.width,obstacle.height,obstacle.status);	
        }
     else if(endflag)
@@ -426,9 +468,16 @@ function update(event)
     
     var socket = io();
     socket.on('serverEvent', function(data){
-      console.log("asd");
-      console.log(data);
-      changelane(data);
+      //console.log("asd");
+      if(data>7.5){
+      	data = 7.5;
+      }
+      else if(Math.abs(data)>7.5){
+      	data = -7.5;
+      }
+
+ 
+      changeLane(Number(-data));
     });
   
 </script>

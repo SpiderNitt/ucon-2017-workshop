@@ -13,30 +13,13 @@ app.get('/app',function(req, res){
   res.sendfile('app.html');
 });
 
-var set_lane = 0;
-var dir = "null";
+
 //Whenever someone connects this gets executed
 io.on('connection', function(socket){
   console.log('A user connected');
 
   socket.on('clientEvent', function(data){
-
-  	if(data < -2 && set_lane == 0){
-	  	dir = "right";
-	  	set_lane = 1;
-	  	console.log(dir)
-	  	socket.broadcast.emit('serverEvent',dir);
-  	}
-	if(data > 2 && set_lane == 0){
-		dir = "left";
-		set_lane = 1;
-		console.log(dir);
-		socket.broadcast.emit('serverEvent',dir);
-	}
-	if(data < 1 && data > -1){
-		set_lane = 0;
-	}
-
+  		socket.broadcast.emit('serverEvent',data);
   });
 
   //Whenever someone disconnects this piece of code executed
