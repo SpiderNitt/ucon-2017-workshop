@@ -1,0 +1,19 @@
+{
+  "name": "webdev-workshop",
+  "version": "1.0.0",
+  "description": "Contains files for the car-lane game as a part of the  μ-Con Workshop",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/benedictflorance/WebDev-Workshop.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/benedictflorance/WebDev-Workshop/issues"
+  },
+  "homepage": "https://github.com/benedictflorance/WebDev-Workshop#readme"
+}
