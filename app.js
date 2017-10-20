@@ -16,9 +16,9 @@ app.use(express.static('public'));
 Writing a route
 */
 
-// when client requests a '/' from the browser, we serve 'random_function.html'
+// when client requests a '/' from the browser, we serve 'game.html'
 app.get('/', function(req, res){
-  res.sendfile('random_function.html');
+  res.sendfile('game.html');
 });
 
 
