@@ -1,0 +1,13 @@
+body{
+	padding: 5px; 
+	margin: 0; 
+	background: black;
+}
+canvas{
+	background: gray; 
+	display:block;
+ 	margin:0 auto;
+}
+#progress{
+	background:url("background.jpg");
+}

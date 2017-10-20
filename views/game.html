@@ -1,0 +1,331 @@
+<html>
+	
+	<head>
+	  	<title>Car Lane Game</title>
+	  	<link rel="stylesheet" type="text/css" href="../public/stylesheets/style.css">
+	</head>
+	
+	<body>
+
+		<!--Audio File Declarations-->
+		<audio id="crash" src="../public/music/crash.mp3"></audio>
+		<audio id="finalcrash" src="../public/music/finalcrash.mp3"></audio>
+
+		<!--Two Canvas Declarations - For progress bar and the game-->
+		<canvas id="progress" width="500" height="40"></canvas>
+		<canvas id = "canvas" width = "500" height = "600"></canvas>
+	</body>
+
+	<!--Socket Script-->
+	<script src="/socket.io/socket.io.js"></script>
+
+	<!--JavaScript Portion of the Code-->
+	<script type="text/javascript">
+
+		//Game Canvas
+		var canvas = document.getElementById("canvas"); //Points to the Canvas Element
+		var ctx = canvas.getContext("2d");//Creating a context for the canvas
+
+		//Progress Bar Canvas
+		var canvas1=document.getElementById("progress");
+		var ctx1=canvas1.getContext("2d");
+
+		//Listener for KeyDown Event
+		document.addEventListener("keydown", update);
+
+		//Flag Variables
+		var enterPress=false; //Flag to detect enter
+		var nitroPress=false; // Flag to detect 'n'
+		var endflag=true; // Flag to detect the game end
+		var flag=0; //Flag for collision detection
+
+		//Other global variables
+		var lives=5; //Lives of the Car
+		var lineY=0  //y-coordinate of the white line
+		var dy=2;//Incremental change in the y-coordinate
+		var score=0; //Game Score
+
+		//Image Declarations
+		var imgTag = new Image();
+		imgTag.src = "../public/images/car.png";
+		imgTag.onload = gamePlay;
+		var barricade=new Image();
+		barricade.src="../public/images/barricade.png";
+		var gameover=new Image();
+		gameover.src="../public/images/gameover.png";
+		var nitro=new Image();
+		nitro.src="../public/images/nitro.png";
+
+		//Variables referencing audio files
+		var crash=document.getElementById("crash");
+		var crashfinal=document.getElementById("finalcrash");
+
+		//Function to update position of White Lines
+		function whiteLines()
+		{
+			if(lineY<=600)
+				lineY=lineY+dy; //Line within canvas
+			else
+				lineY=0; //Line out of Canvas
+			var x;
+			
+			//White Lines for Lane 1
+			for(x=0;x<5;x++)
+				drawWhiteLines(72.5,lineY+x*100,10,70);
+
+			for(x=1;x<=6;x++)
+				drawWhiteLines(72.5,lineY-(x*100),10,70);
+
+			//White Lines for Lane 2
+			for(x=0;x<5;x++)
+				drawWhiteLines(245.33333,lineY+x*100,10,70);
+
+			for(x=1;x<=6;x++)
+				drawWhiteLines(245.33333,lineY-(x*100),10,70);
+
+			//White Lines for Lane 3
+			for(x=0;x<5;x++)
+				drawWhiteLines(415.33333,lineY+x*100,10,70);
+
+			for(x=1;x<=6;x++)
+				drawWhiteLines(415.33333,lineY-(x*100),10,70);
+		}
+
+		//Function that draws white lines
+		function drawWhiteLines(x,y,width,height)
+		{
+	    	ctx.beginPath();
+		  	ctx.rect(x,y,width,height);
+		  	ctx.fillStyle="white";
+		  	ctx.fill();
+		}
+
+		//Function to draw yellow lines on the canvas
+		function background()
+		{
+		  	ctx.beginPath();
+		  	ctx.rect(155,0,5,600);
+		  	ctx.fillStyle="yellow";
+		  	ctx.fill();
+		  	ctx.rect(162,0,5,600);
+		  	ctx.fill();
+		  	ctx.rect(325,0,5,600);
+		  	ctx.fill();
+		   	ctx.rect(332,0,5,600);
+		  	ctx.fill();
+		  	ctx.fillStyle = "green";
+		  	ctx.closePath();
+		  	ctx.fillStyle = "#00FF00";
+		  	whiteLines();
+		}
+
+		//Object function with the properties of x-coordinate, y-coordinate, width, height, status and speed
+		function object (x,y,status,width,height,speed) 
+		{
+		  	this.x = x;
+		  	this.y = y;
+		  	this.width = width;
+		  	this.height = height;
+		  	this.status = status;
+		  	this.speed = speed;
+		}    
+
+		//Creation of an obstacle and a car object with the corresponding properties
+		var obstacle = new object(40,0,true,80,80,5);
+		var car = new object(30,420,true,100,150,20);
+
+		//Function for generating obstacles
+		var random = 0; 
+		
+		function obstacleGeneration()
+		{
+		    if(!obstacle.status)//If the obstacle is not present in the canvas already
+		    {
+		     	//random variable is randomly set to 0, 1 or 2
+		  	 	var random = Math.round(Math.random()*2);
+		  	 	//Collision-Flag is set to zero
+		     	flag=0;
+		     	//x-coordinate to obstacle is randomly matched to any of the three lanes
+		  	 	obstacle.x = (30+170*random); 
+		  	 	//Obstacle is currently present	 
+		  	 	obstacle.status = true;
+		  	 	//Draw the object
+			 	ctx.drawImage(barricade,0,0,150,150,obstacle.x,obstacle.y,obstacle.width,obstacle.height);
+		     	ctx.fillStyle = "#00FF00";
+		    }
+
+		}
+		
+		function drawObstacle(){
+		  	//If obstacle position have determined, draw the obstacle
+		  	if(obstacle.status){
+		  		ctx.beginPath();
+		     	ctx.drawImage(barricade,0,0,150,150,obstacle.x,obstacle.y,obstacle.width,obstacle.height);
+		    }
+		   //Else determine the positions and draw the obstacle
+		    else{
+		      	ctx.clearRect(obstacle.x,obstacle.y,obstacle.width,obstacle.height);
+		      	obstacleGeneration();
+		    }
+		}
+
+		//Function to draw the car
+		function drawCar()
+		{
+		  	ctx.drawImage(imgTag, car.x, car.y);                       
+		  
+		}
+
+		//Function to draw nitro
+		function drawNitro()
+		{
+			ctx.drawImage(nitro,car.x+15,car.y+145,70,45);
+		}
+
+		//Collision-Detection
+		function detect(obstacleX,obstacleY,obstacleW,obstacleH)
+		{
+		  	if(car.y<=obstacleY+obstacleH){ //If y-coord of obstacle comes below the y-coord car
+				/*
+				Check the following conditions for collision - detection
+				 1. Collision Flag is Zero
+				 2.One out of these three:
+				 a. Car starts within the obstacle and ends outside the obstaclce
+				 b. Car starts outside the obstacle and ends within the obstacle
+				 c. Obstacle is within the car
+				*/
+		    	if(flag==0&&
+		    	((car.x>=obstacleX)&&(car.x<=obstacleX+obstacleW)) 
+				||((car.x+car.width>=obstacleX)&&(car.x+car.width<=obstacleX+obstacleW))
+				||((obstacleX>=car.x)&&(obstacleX+obstacleW<=car.x+car.width))) 
+				{
+		     		lives--; //Reduce life
+		     		flag=1; //Set collision flag to 1
+		     		obstacle.y=601; //To make the obstacle disappear, throw it out of the canvas
+		     		crash.play(); // Play crash sound
+					if(lives==0)
+		      			car.status=false; //If lives is zero, set it's status to false
+		    	} 
+		    }  
+		}
+
+		function update(event)
+		{ 
+		 	//Move Left
+		    if (event.keyCode == 37){
+		    	if((car.x-150>=0)&&(car.x<=canvas.width-imgTag.width))
+	        		car.x-=170; 
+		    }
+		    //Move Right
+		    if (event.keyCode == 39){
+		   		if((car.x>=0)&&(car.x+150<=canvas.width-imgTag.width))
+		        	car.x +=170; 
+		    }
+		    //Enter key
+		    if(event.keyCode==13)
+		    	enterPress=true;
+		    //Key 'n'
+		    if(event.keyCode==78)
+		    	nitroPress=true;
+		}
+
+		//Function to change lane through the accelerometer values
+		function changeLane(direction)
+		{
+		  	direction = Number(direction.toFixed(0)); //Direction from accelerometer 
+		 	var offset = car.width;
+		 	// Direction is negative for left and positive for right
+		 	if(direction<0)
+		   		offset = 0;
+		  	car.x = (canvas.width/15)*direction + canvas.width/2 - offset;
+		}
+		
+		var nitroStart=new Date();
+		var nitroFlag=0;
+		
+		function detectNitro()
+		{
+		 	if(nitroPress){ 
+		        //Increase Line speed and increment score
+		        dy=4;
+		        scoreincrease=0.05;
+		        drawNitro();
+		        if(!nitroFlag){
+	              	nitroStart=Date.now();
+		            nitroFlag++;
+			    }    
+		    }
+	        //Disable nitro after five seconds
+	        if(Date.now()>nitroStart+5000){   
+          		nitroPress=false;
+          		scoreincrease=0.01;
+            	dy=2;
+		        ctx.clearRect(car.x+15,car.y+145,70,45);
+		        nitroFlag=0;
+		    }
+		}
+		 
+		var scoreincrease=0.01;
+
+		function gamePlay()
+		{
+		  	ctx1.clearRect(0,0,canvas1.width,canvas1.height);
+		  	score+=scoreincrease;
+		    if(car.status){
+			 	ctx.clearRect(0,0,canvas.width,canvas.height);
+			  	background();
+			    drawCar();
+			    detectNitro();
+		    	//When obstacle goes out of canvas, status is made false and is made to fall back again
+		    	if(obstacle.y>canvas.height){
+		         	obstacle.status = false;
+		         	obstacle.y = 0;
+		    	}
+			    //Update y-coordinate
+			     obstacle.y+=obstacle.speed;
+			    //Detect for collision
+			    detect(obstacle.x,obstacle.y,obstacle.width,obstacle.height);
+			    //Draw Obstacle
+			    drawObstacle(obstacle.x,obstacle.y,obstacle.width,obstacle.height,obstacle.status);	
+		    }
+		    //If all lives have been lost
+		    else if(endflag){ 
+		    	//Play music for final crash
+			    finalcrash.play();
+			    //Set endflag back to zero as game restarts
+			    endflag=0;
+			    // Display new game notice
+			    ctx.drawImage(gameover,130,80,250,180);
+			    ctx.beginPath();
+			    ctx.rect(130,260,250,100);
+			    ctx.fill();
+			 	scoreincrease=0;
+			    ctx.font="bold 25px serif";
+			    ctx.fillStyle="green";
+			    ctx.fillText("Press Enter to Start",153,280);
+			    ctx.fillStyle="black";
+			    ctx.closePath();
+		    }
+		    requestAnimationFrame(gamePlay); //Updates every frame
+		    ctx.fillStyle="black";
+		    if(enterPress==true)
+		    	document.location.reload(); //Reload page
+		}
+
+		gamePlay(); //Call the main gameplay function
+		    
+		var socket = io();
+		socket.on('serverEvent', function(data){
+			//Lower and upper bound for accelerometer values
+		    if(data>7.5){
+		    	data = 7.5;
+		    }
+		    else if(Math.abs(data)>7.5){
+		    	data = -7.5;
+		    }
+		    changeLane(-1*Number(data));// To change lane
+		});
+	  
+	</script>
+
+</html>
