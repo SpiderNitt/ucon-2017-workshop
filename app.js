@@ -33,9 +33,9 @@ io.on('connection', function(socket){
 
   //Whenever 'clientEvent' occurs this gets executed
   socket.on('clientEvent', function(data){
-
-      //The data from clientEvent is sent as 'serverEvent' to whoever listens to 'serverEvent'
-  		socket.broadcast.emit('serverEvent',data);
+    
+    //The data from clientEvent is sent as 'serverEvent' to whoever listens to 'serverEvent'
+  	socket.broadcast.emit('serverEvent',data);
   });
 
   //Whenever someone disconnects this piece of code executed
