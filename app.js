@@ -12,13 +12,14 @@ app.use(express.static('public'));
 
 
 
+
 /*
 Writing a route
 */
 
 // when client requests a '/' from the browser, we serve 'game.html'
 app.get('/', function(req, res){
-  res.sendfile('.\\views\\game.html');
+  res.sendfile('./views/game.html');
 });
 
 
