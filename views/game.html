@@ -228,6 +228,24 @@
 		    if(event.keyCode==78)
 		    	nitroPress=true;
 		}
+		
+		function progressBar(){
+  			 var bar = document.getElementById("progress");
+   			 var color = "green";
+   			 var barWidth = "500";
+   			 bar.style.height = "40";
+  			 barWidth = (lives/5)*500;
+   			 bar.style.width = String(barWidth);
+   			 if(lives<=1){
+    			   color = "red";
+   			 }
+   			 else if(lives<=3){
+    			   color = "yellow";
+   			}
+   
+  			bar.style.background = color;
+   
+		}
 
 		//Function to change lane through the accelerometer values
 		function changeLane(direction)
@@ -269,6 +287,7 @@
 
 		function gamePlay()
 		{
+			progressBar();
 		  	ctx1.clearRect(0,0,canvas1.width,canvas1.height);
 		  	score+=scoreincrease;
 		    if(car.status){
