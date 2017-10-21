@@ -2,14 +2,14 @@
 	
 	<head>
 	  	<title>Car Lane Game</title>
-	  	<link rel="stylesheet" type="text/css" href="stylesheets/style.css">
+	  	<link rel="stylesheet" type="text/css" href="../public/stylesheets/style.css">
 	</head>
 	
 	<body>
 
 		<!--Audio File Declarations-->
-		<audio id="crash" src="music/crash.mp3"></audio>
-		<audio id="finalcrash" src="music/finalcrash.mp3"></audio>
+		<audio id="crash" src="../public/music/crash.mp3"></audio>
+		<audio id="finalcrash" src="../public/music/finalcrash.mp3"></audio>
 
 		<!--Two Canvas Declarations - For progress bar and the game-->
 		<canvas id="progress" width="500" height="40"></canvas>
@@ -47,14 +47,14 @@
 
 		//Image Declarations
 		var imgTag = new Image();
-		imgTag.src = "images/car.png";
+		imgTag.src = "../public/images/car.png";
 		imgTag.onload = gamePlay;
 		var barricade=new Image();
-		barricade.src="images/barricade.png";
+		barricade.src="../public/images/barricade.png";
 		var gameover=new Image();
-		gameover.src="images/gameover.png";
+		gameover.src="../public/images/gameover.png";
 		var nitro=new Image();
-		nitro.src="images/nitro.png";
+		nitro.src="../public/images/nitro.png";
 
 		//Variables referencing audio files
 		var crash=document.getElementById("crash");
