@@ -11,8 +11,6 @@ var io = require('socket.io')(http); //socket.io package for creating socket con
 app.use(express.static('public')); 
 
 
-
-
 /*
 Writing a route
 */
