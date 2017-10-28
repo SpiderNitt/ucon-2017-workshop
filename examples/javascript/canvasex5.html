@@ -1,0 +1,21 @@
+<html>
+<head>
+	<script type="text/javascript">
+function draw(){
+  	var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+	var img = new Image();   // Create new img element
+	img.src = 'spider.jpg'; // Set source path
+	img.addEventListener('load', function() {
+	  // execute drawImage statements here
+	  ctx.drawImage(img,50,50);
+	  //ctx.drawImage(img,50,50,100,100);
+	}, false);
+}
+</script>
+</head>
+</head>
+ <body onload="draw()">
+   <canvas id="canvas" width="700" height="500"></canvas>
+ </body>
+</html>

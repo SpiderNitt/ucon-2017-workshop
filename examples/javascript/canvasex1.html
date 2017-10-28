@@ -1,0 +1,22 @@
+<html>
+<head>
+	<script type="text/javascript">
+  function draw() {
+  	var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+    ctx.beginPath();
+    ctx.moveTo(75, 50);
+    //ctx.lineWidth=10;
+    ctx.lineTo(100, 75);
+    ctx.lineTo(100, 25);
+    ctx.fillStyle="green";
+    ctx.fill(); 
+    //ctx.stroke();
+}
+	</script>
+</head>
+</head>
+ <body onload="draw();">
+   <canvas id="canvas" width="150" height="150"></canvas>
+ </body>
+</html>
