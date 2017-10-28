@@ -1,0 +1,26 @@
+h1{
+			text-align: center;
+			color: red;
+		border-top: 1px;
+		border-left: 1px;
+		border-right: 1px;
+		border-bottom: 1px;
+		border-color: black;
+		border-style: solid;
+			padding:20px;
+		}
+      .division{
+      	text-align: center;
+      }
+      #div1{
+      	color: blue;
+      }
+      #div2{
+      	color: green;
+      }
+     p{
+     	border:1px solid red;
+      }
+      #pic{
+      	margin-top:20px;
+      }
