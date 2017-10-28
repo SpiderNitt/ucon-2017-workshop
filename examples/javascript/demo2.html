@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>SPider workshop</title>
+</head>
+<body>
+<span>Type the colour of the button on clicking:'red' or 'green'</span><input type="text" id='colour'>
+<br>
+<button id='myButton' onclick='myfun()'>Click here</button>
+<br>
+<button id='callbox' onclick="createBox()">Click here to create 10 textboxes</button>
+<div id='boxes'></div>
+<script type="text/javascript">
+function myfun()
+	{   if(document.getElementById('colour').value=='red')
+		document.getElementById('myButton').style.backgroundColor='red';
+		else
+			document.getElementById('myButton').style.backgroundColor='green';
+	}
+	function callcolor()
+	{
+      var x;
+      for(x=0;x<10;x++)
+      {
+      	if(document.getElementById('text_'+x).value=='red')
+      		document.getElementById('button_'+x).style.backgroundColor='red';
+      	else if(document.getElementById('text_'+x).value=='green')
+			document.getElementById('button_'+x).style.backgroundColor='green';
+      }
+	}
+
+function createBox()
+{
+	var container=document.getElementById('boxes');
+	var i;
+	for(i=0;i<10;i++)
+	{
+		var textbox=document.createElement('input');
+		var button=document.createElement('button');
+         textbox.setAttribute('id','text_'+i);
+         button.setAttribute('id','button_'+i);
+         button.setAttribute('onclick','callcolor()');
+         button.setAttribute('style','width:80px;height:18px;')
+		var br=document.createElement('br');
+		container.appendChild(textbox);
+		container.appendChild(button);
+		container.appendChild(br);
+	}
+}
+</script>
+</body>
+</html>
